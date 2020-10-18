@@ -1,7 +1,9 @@
 Answer – Insights From Data With BigQuery: Challenge Lab
 
 
-TASK 1
+
+Query 1: Total Confirmed Cases
+Build a query that will answer "What was the total count of confirmed cases on Apr 15, 2020?" The query needs to return a single row containing the sum of confirmed cases across all countries. The name of the column should be total_cases_worldwide.
 --------------------------------------------------------------------------------
 SELECT
 SUM(cumulative_confirmed) AS total_cases_worldwide
@@ -11,7 +13,12 @@ WHERE
 date = “2020-04-15”
 ---------------------------------------------------------------------------------
 
-TASK 2
+
+
+
+
+Query 2: Worst Affected Areas
+Build a query for answering "How many states in the US had more than 100 deaths on Apr 10, 2020?" The query needs to list the output in the field count_of_states. Hint: Don't include NULL values.
 ---------------------------------------------------------------------------------
 SELECT
 COUNT(*) AS count_of_states
@@ -31,7 +38,12 @@ subregion1_name
 WHERE death_count > 100
 ----------------------------------------------------------------------------------
 
-TASK 3
+
+
+
+
+Query 3: Identifying Hotspots
+Build a query that will answer "List all the states in the United States of America that had more than 1000 confirmed cases on Apr 10, 2020?" The query needs to return the State Name and the corresponding confirmed cases arranged in descending order. Name of the fields to return state and total_confirmed_cases.
 ----------------------------------------------------------------------------------
 
 SELECT
@@ -50,7 +62,10 @@ ORDER BY total_confirmed_cases DESC
 
 
 
-TASK 4
+
+
+Query 4: Fatality Ratio
+Build a query that will answer "What was the case-fatality ratio in Italy for the month of April 2020?" Case-fatality ratio here is defined as (total deaths / total confirmed cases) * 100. Write a query to return the ratio for the month of April 2020 and containing the following fields in the output: total_confirmed_cases, total_deaths, case_fatality_ratio.
 -----------------------------------------------------------------------------------
 
 SELECT SUM(cumulative_confirmed) AS total_confirmed_cases, SUM(cumulative_deceased) AS total_deaths, (SUM(cumulative_deceased)/SUM(cumulative_confirmed))*100 AS case_fatality_ratio
@@ -60,7 +75,10 @@ WHERE country_name=”Italy” AND date BETWEEN “2020-04-01” AND “2020-04-
 
 
 
-TASK 5
+
+
+Query 5: Identifying specific day
+Build a query that will answer: "On what day did the total number of deaths cross 10000 in Italy?" The query should return the date in the format yyyy-mm-dd.
 -----------------------------------------------------------------------------------
 date
 FROM
@@ -74,7 +92,11 @@ LIMIT 1
 
 
 
-TASK 6
+
+
+
+Query 6: Finding days with zero net new cases
+The following query is written to identify the number of days in India between 21 Feb 2020 and 15 March 2020 when there were zero increases in the number of confirmed cases. However it is not executing properly. You need to update the query to complete it and obtain the result:
 -----------------------------------------------------------------------------------
 
 WITH india_cases_by_date AS (
@@ -110,7 +132,10 @@ net_new_cases = 0
 
 
 
-TASK 7
+
+
+Query 7: Doubling rate
+Using the previous query as a template, write a query to find out the dates on which the confirmed cases increased by more than 10% compared to the previous day (indicating doubling rate of ~ 7 days) in the US between the dates March 22, 2020 and April 20, 2020. The query needs to return the list of dates, the confirmed cases on that day, the confirmed cases the previous day, and the percentage increase in cases between the days. Use the following names for the returned fields: Date, Confirmed_Cases_On_Day, Confirmed_Cases_Previous_Day and Percentage_Increase_In_Cases.
 -----------------------------------------------------------------------------------
 
 WITH us_cases_by_date AS (
@@ -150,8 +175,9 @@ percentage_increase > 10
 
 
 
-TASK 8
------------------------------------------------------------------------------------
+
+Query 8: Recovery rate
+Build a query to list the recovery rates of countries arranged in descending order (limit to 10) on the date May 10, 2020. Restrict the query to only those countries having more than 50K confirmed cases. The query needs to return the following fields: country, recovered_cases, confirmed_cases, recovery_rate.-----------------------------------------------------------------------------------
 
 WITH cases_by_country AS (
 SELECT
@@ -183,7 +209,10 @@ LIMIT10
 
 
 
-TASK 9
+
+
+Query 9: CDGR - Cumulative Daily Growth Rate
+The following query is trying to calculate the CDGR on May 10, 2020(Cumulative Daily Growth Rate) for France since the day the first case was reported. The first case was reported on Jan 24, 2020. The CDGR is calculated as:
 -----------------------------------------------------------------------------------
 WITH
 france_cases AS (
@@ -214,7 +243,15 @@ from summary
 ----------------------------------------------------------------------------------
 
 
-TASK 10 -  Create a Datastudio report
+
+
+
+Create a Datastudio report
+Create a Datastudio report that plots the following for the United States:
+
+Number of Confirmed Cases
+Number of Deaths
+Date range : 2020-03-15 to 2020-04-30
 ----------------------------------------------------------------------------------
 
 SELECT
