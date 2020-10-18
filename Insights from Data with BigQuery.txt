@@ -44,6 +44,7 @@ country_name="United States of America"
 AND date = "2020-04-10"
 GROUP BY subregion1_name
 HAVING total_confirmed_cases > 1000
+AND subregion1_name IS NOT NULL
 ORDER BY total_confirmed_cases DESC
 ----------------------------------------------------------------------------------
 
