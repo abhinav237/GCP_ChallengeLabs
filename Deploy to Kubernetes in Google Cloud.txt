@@ -1,0 +1,125 @@
+Task 1: Create a Docker image and store the Dockerfile
+
+source <(gsutil cat gs://cloud-training/gsp318/marking/setup_marking.sh)
+
+
+//run copied command
+
+cd valkyrie-app
+
+nano Dockerfile 
+
+FROM golang:1.10
+WORKDIR /go/src/app
+COPY source .
+RUN go install -v
+ENTRYPOINT ["app","-single=true","-port=8080"]
+
+docker build -t valkyrie-app:v0.0.1 .
+
+docker images
+
+(In new cloud shell)-
+cd ~/marking
+./step1.sh
+
+
+
+
+Task 2: Test the created Docker image
+(Shell 1)-
+docker run -p 8080:8080 --name valkyrie-app valkyrie-app:v0.0.1 &
+
+(Shell 2- make sure it is in marking)-
+./step2.sh
+
+
+
+
+
+Task 3: Push the Docker image in the Container Repository
+
+export YOUR_PROJECT="Project id"
+
+docker tag valkyrie-app:v0.0.1 gcr.io/$YOUR_PROJECT/valkyrie-app:v0.0.1
+docker images
+docker push gcr.io/$YOUR_PROJECT/valkyrie-app:v0.0.1
+
+(Shell 2)-
+./step2.sh
+
+
+
+
+
+Task 4: Create and expose a deployment in Kubernetes
+
+cd k8s/
+
+ls
+
+nano deployment.yaml
+// Editor-
+	metaimage- gcr.io/YOUR_PROJECT_ID/valkyrie-app
+
+
+nano deployment.yaml
+// Editor-
+	metaimage- gcr.io/YOUR_PROJECT_ID/valkyrie-app:v0.0.1
+
+kubectl create -f deployment.yaml
+
+kubectl create -f service.yaml
+
+
+
+
+
+Task 5: Update the deployment with a new version of valkyrie-app
+
+cd ..
+
+git merge origin/kurt-dev
+
+docker build -t valkyrie-app:v0.0.2 .
+
+docker tag valkyrie-app:v0.0.2 gcr.io/$YOUR_PROJECT/valkyrie-app:v0.0.2
+docker images
+docker push gcr.io/$YOUR_PROJECT/valkyrie-app:v0.0.2
+
+kubectl edit deployment valkyrie-dev
+// image: gcr.io/YOUR_PROJECT_ID/valkyrie-app:v0.0.2
+:wq
+
+
+
+
+
+Task 6: Create a pipeline in Jenkins to deploy your app
+
+docker ps
+
+docker container kill $(docker ps -q) NAME_OF_CONTAINER_ID
+
+docker ps
+
+printf $(kubectl get secret cd-jenkins -o jsonpath="{.data.jenkins-admin-password}" | base64 --decode);echo
+
+
+export POD_NAME=$(kubectl get pods --namespace default -l "app.kubernetes.io/component=jenkins-master" -l "app.kubernetes.io/instance=cd" -o jsonpath="{.items[0].metadata.name}")
+kubectl port-forward $POD_NAME 8080:8080 >> /dev/null &
+
+
+
+nano Jenkinsfile
+// replace YOUR_PROJECT with your GCP project ID
+
+nano source/html.go
+// keyboard logo -> Ctrl + W -> green -> Change all green to orange
+
+git config --global user.email $YOUR_PROJECT
+git config --global user.name $YOUR_PROJECT
+
+git add *
+git commit -m 'green to orange'
+git push origin master
